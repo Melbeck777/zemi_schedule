@@ -1,7 +1,6 @@
 ### Create Schedule from choseisan
-```
 This code use [choseisan](https://maintenance.chouseisan.com/).
-```
+
 
 ### File structure
 ```
