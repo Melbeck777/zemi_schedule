@@ -42,13 +42,18 @@ for url_index in range(2):
             f.write(r.text)
     soup  = BeautifulSoup(html, 'html.parser')
     current_name = ''
+    flag = False
     for index,table in enumerate(soup.find_all('td')):
         name = table.find('a')
         if name is not None:
             names.append(name.text)
         elif table is not None:
             if table.text != '\n\n×\t\t\t\t\t\t\t\n◯\t\t\t\t\t\t\t\n△\t\t\t\t\t\t\t\n\n' and table.text != '日程':
-                if table.text in input_type:
+                if flag:
+                    member_data[names[name_index]][url_index+1].append(table.text)
+                    name_index += 1
+                    name_index %= len(names)
+                elif table.text in input_type:
                     if names[name_index] not in member_data:
                         name_index += 1
                         name_index %= len(names)
@@ -57,10 +62,9 @@ for url_index in range(2):
                     member_data[names[name_index]][url_index+1].append(table.text)
                     name_index += 1
                     name_index %= len(names)
-
-                elif len(columns) > 0 and columns[0] == table.text:
-                    name_index += 1
                 elif table.text != '\n':
+                    if table.text == 'コメント':
+                        flag =True
                     columns.append(table.text)
     input_columns = labels.copy()
     for now in columns:
@@ -89,4 +93,4 @@ for url_index in range(2):
             save_data.append(current_data)
     save_name = os.path.join(str(today.year),'{}Q.csv'.format(url_index+start+1))
     df = pd.DataFrame(save_data)
-    df.to_csv(save_name,encoding='shift_jis',header=False, index=False)
+    df.to_csv(save_name,encoding='cp932',header=False, index=False)
