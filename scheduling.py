@@ -66,15 +66,27 @@ for url_index in range(2):
     for now in columns:
         input_columns.append(now)
     save_data = [input_columns]
-    for name in names:
-        current_data = [name]
-        if name not in member_data:
-            continue
-        for label_index in range(len(labels)-1):
-            current_data.append(member_data[name][0][label_index])
-        for column_index in range(min(len(columns),len(member_data[name][url_index+1]))):
-            current_data.append(member_data[name][url_index+1][column_index])
-        save_data.append(current_data)
+    if url_index == 0:
+        for name in names:
+            current_data = [name]
+            if name not in member_data:
+                continue
+            for label_index in range(len(labels)-1):
+                current_data.append(member_data[name][0][label_index])
+            for date in member_data[name][url_index+1]:
+                current_data.append(date)
+            save_data.append(current_data)
+    else:
+        for name in member_data:
+            current_data = [name]
+            for label_index in range(len(labels)-1):
+                current_data.append(member_data[name][0][label_index])
+            date_index = 1
+            if len(member_data[name][0][label_index]) == 0:
+                date_index = 0
+            for date in member_data[name][date_index]:
+                current_data.append(date)
+            save_data.append(current_data)
     save_name = os.path.join(str(today.year),'{}Q.csv'.format(url_index+start+1))
     df = pd.DataFrame(save_data)
     df.to_csv(save_name,encoding='shift_jis',header=False, index=False)
